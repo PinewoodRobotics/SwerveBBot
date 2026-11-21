@@ -22,10 +22,10 @@ public class Drivetrain {
   private final Translation2d backLeftLocation   = new Translation2d(SwerveConstants.kBackLeftx,   SwerveConstants.kBackLefty);
   private final Translation2d backRightLocation  = new Translation2d(SwerveConstants.kBackRightx,  SwerveConstants.kBackRighty);
 
-  private final SwerveModule frontLeft = new SwerveModule(SwerveConstants.kFrontLeftDriveMotorCanID, SwerveConstants.kFrontLeftTurningMotorCanID, 0, 1, 2, 3); //encoder channels still need fixing
-  private final SwerveModule frontRight = new SwerveModule(SwerveConstants.kFrontRightDriveMotorCanID, SwerveConstants.kFrontRightTurningMotorCanID, 4, 5, 6, 7);
-  private final SwerveModule backLeft = new SwerveModule(SwerveConstants.kRearLeftDriveMotorCanID, SwerveConstants.kRearLeftTurningMotorCanID, 8, 9, 10, 11);
-  private final SwerveModule backRight = new SwerveModule(SwerveConstants.kRearRightDriveMotorCanID, SwerveConstants.kRearRightTurningMotorCanID, 12, 13, 14, 15);
+  private final SwerveModule frontLeft = new SwerveModule(SwerveConstants.kFrontLeftDriveMotorCanID, SwerveConstants.kFrontLeftTurningMotorCanID, SwerveConstants.kFrontLeftTurningEncoderCanID); //encoder channels still need fixing
+  private final SwerveModule frontRight = new SwerveModule(SwerveConstants.kFrontRightDriveMotorCanID, SwerveConstants.kFrontRightTurningMotorCanID, SwerveConstants.kFrontRightTurningEncoderCanID);
+  private final SwerveModule backLeft = new SwerveModule(SwerveConstants.kRearLeftDriveMotorCanID, SwerveConstants.kRearLeftTurningMotorCanID, SwerveConstants.kRearLeftTurningEncoderCanID);
+  private final SwerveModule backRight = new SwerveModule(SwerveConstants.kRearRightDriveMotorCanID, SwerveConstants.kRearRightTurningMotorCanID, SwerveConstants.kRearRightTurningEncoderCanID);
 
   private final OnboardIMU imu = new OnboardIMU(OnboardIMU.MountOrientation.FLAT);
 

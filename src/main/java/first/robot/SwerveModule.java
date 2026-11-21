@@ -6,6 +6,8 @@ package first.robot;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.hardware.CANcoder;
 import org.wpilib.hardware.bus.CANPort;
 import com.revrobotics.RelativeEncoder;
 import org.wpilib.math.controller.PIDController;
@@ -26,6 +28,9 @@ public class SwerveModule {
 
   private final SparkMax driveMotor;
   private final SparkMax turningMotor;
+
+  private final CANcoder turningEncoder;
+  turningEncoder = new CANcoder(turningEncoderCanId, new CANBus(CANPort.CAN_S0));  
 
   private final RelativeEncoder driveEncoder;
   //private final Encoder turningEncoder;
@@ -122,7 +127,7 @@ public class SwerveModule {
    * @param desiredVelocity Desired velocity.
    */
   public void setDesiredVelocity(SwerveModuleVelocity desiredVelocity) {
-    var encoderRotation = new Rotation2d(turningEncoder.getDistance());
+    var encoderRotation = new Rotation2d(getTurningAngleRadians());
 
     // Optimize the desired velocity to avoid spinning further than 90 degrees, then scale velocity
     // by cosine of angle error. This scales down movement perpendicular to the desired direction of
@@ -133,12 +138,12 @@ public class SwerveModule {
     // Calculate the drive output from the drive PID controller and feedforward.
 
     final double driveOutput =
-        drivePIDController.calculate(driveEncoder.getRate(), velocity.velocity)
+        drivePIDController.calculate(getDriveVelocityMetersPerSec(), velocity.velocity)
             + driveFeedforward.calculate(desiredVelocity.velocity);
 
     // Calculate the turning motor output from the turning PID controller and feedforward.
     final double turnOutput =
-        turningPIDController.calculate(turningEncoder.getDistance(), velocity.angle.getRadians())
+        turningPIDController.calculate(getTurningAngleRadians(), velocity.angle.getRadians())
             + turnFeedforward.calculate(turningPIDController.getSetpoint().velocity);
 
     driveMotor.setVoltage(driveOutput);

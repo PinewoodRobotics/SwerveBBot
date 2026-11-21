@@ -26,4 +26,10 @@ public class SwerveConstants {
     public final static int kRearRightDriveMotorCanID = 12; 
     public final static int kRearRightTurningMotorCanID = 13; 
 
+    // CANcoder CAN IDs
+    public final static int kRearLeftTurningEncoderCanID = 2;
+    public final static int kFrontLeftTurningEncoderCanID = 3;
+    public final static int kRearRightTurningEncoderCanID = 5;
+    public final static int kFrontRightTurningEncoderCanID = 4;
+
 }
