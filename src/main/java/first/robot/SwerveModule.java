@@ -17,6 +17,10 @@ import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.SwerveModulePosition;
 import org.wpilib.math.kinematics.SwerveModuleVelocity;
 import org.wpilib.math.trajectory.TrapezoidProfile;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class SwerveModule {
   private static final double WHEEL_RADIUS = 0.0508; //need to fix these later
@@ -29,8 +33,12 @@ public class SwerveModule {
   private final SparkMax driveMotor;
   private final SparkMax turningMotor;
 
+  private final SparkMaxConfig driveConfig ;  
+  private final SparkMaxConfig turningConfig;
+
+
+
   private final CANcoder turningEncoder;
-  turningEncoder = new CANcoder(turningEncoderCanId, new CANBus(CANPort.CAN_S0));  
 
   private final RelativeEncoder driveEncoder;
   //private final Encoder turningEncoder;
@@ -38,14 +46,14 @@ public class SwerveModule {
   
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final PIDController drivePIDController = new PIDController(1, 0, 0); //need to fix these later
+  private final PIDController drivePIDController = new PIDController(0.1, 0, 0); //need to fix these later
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final ProfiledPIDController turningPIDController = //need to fix these later
       new ProfiledPIDController(
-          1,
-          0,
-          0,
+          1.5,
+          0.0015,
+          0.12,
           new TrapezoidProfile.Constraints(
               MODULE_MAX_ANGULAR_VELOCITY, MODULE_MAX_ANGULAR_ACCELERATION));
 
@@ -66,8 +74,24 @@ public class SwerveModule {
       ) {
       driveMotor = new SparkMax(CANPort.CAN_S0, driveMotorCanId, MotorType.kBrushless);
       turningMotor = new SparkMax(CANPort.CAN_S0, turningMotorCanId, MotorType.kBrushless); // need to fix S0
+      turningEncoder = new CANcoder(turningEncoderCanId, new CANBus(CANPort.CAN_S0));  
 
-     driveEncoder = driveMotor.getEncoder();
+      driveConfig = new SparkMaxConfig();
+      driveConfig.idleMode(IdleMode.kBrake);
+      driveConfig.smartCurrentLimit(40);
+      driveConfig.inverted(false); 
+
+      driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      
+      turningConfig = new SparkMaxConfig();
+      turningConfig.idleMode(IdleMode.kBrake);
+      turningConfig.smartCurrentLimit(20);
+      turningConfig.inverted(false);
+
+      turningMotor.configure(turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+      driveEncoder = driveMotor.getEncoder();
+
     //turningEncoder = new Encoder(turningEncoderChannelA, turningEncoderChannelB);
 
     // Set the distance per pulse for the drive encoder. We can simply use the
