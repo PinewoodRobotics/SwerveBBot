@@ -10,7 +10,8 @@ import org.wpilib.math.filter.SlewRateLimiter;
 import org.wpilib.math.util.MathUtil;
 
 public class Robot extends TimedRobot {
-  private final Gamepad controller = new Gamepad(0);
+  private final Gamepad controllerLeft = new Gamepad(0);
+  private final Gamepad controllerRight = new Gamepad(1);
   private final Drivetrain swerve = new Drivetrain();
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
@@ -29,18 +30,19 @@ public class Robot extends TimedRobot {
     driveWithJoystick(true);
   }
 
+// Use for controllerRight & controllerLeft
   private void driveWithJoystick(boolean fieldRelative) {
-    // Get the x velocity. We are inverting this because gamepads return
+    // Get the x velocity. We are inverting this because gamepads return 
     // negative values when we push forward.
     final var xVelocity =
-        -xVelocityLimiter.calculate(MathUtil.applyDeadband(controller.getLeftY(), 0.02))
+        -xVelocityLimiter.calculate(MathUtil.applyDeadband(controllerRight.getLeftY(), 0.02))
             * Drivetrain.MAX_VELOCITY;
 
     // Get the y velocity or sideways/strafe velocity. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
     final var yVelocity =
-        -yVelocityLimiter.calculate(MathUtil.applyDeadband(controller.getLeftX(), 0.02))
+        -yVelocityLimiter.calculate(MathUtil.applyDeadband(controllerRight.getLeftX(), 0.02))
             * Drivetrain.MAX_VELOCITY;
 
     // Get the rate of angular rotation. We are inverting this because we want a
@@ -48,7 +50,7 @@ public class Robot extends TimedRobot {
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
     final var rot =
-        -rotLimiter.calculate(MathUtil.applyDeadband(controller.getRightX(), 0.02))
+        -rotLimiter.calculate(MathUtil.applyDeadband(controllerLeft.getRightX(), 0.02))
             * Drivetrain.MAX_ANGULAR_VELOCITY;
 
     swerve.drive(xVelocity, yVelocity, rot, fieldRelative, getPeriod());
